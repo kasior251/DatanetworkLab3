@@ -87,44 +87,4 @@ public class Converter {
         }
         return 0;
      }
-
-    public static void main (String[] args) {
-        String file = "C:\\Users\\Kasia\\IdeaProjects\\DatanetworkLab3Part1\\src\\currencies.csv";
-        BufferedReader br = null;
-        String line = "";
-        String splitBy = ",";
-        String[] currency = new String[10];
-
-        try {
-            br = new BufferedReader(new FileReader(file));
-            while ((line = br.readLine()) != null) {
-                currency = line.split(splitBy);
-            }
-
-            Scanner keyboard = new Scanner(System.in);
-            System.out.println("Type in first currency, amount and currency to convert to (without white spaces)");
-            String query = keyboard.nextLine();
-            do {
-                System.out.println(Converter.convert(query.toUpperCase(), currency));
-                System.out.println("");
-                System.out.println("Type in first currency, amount and currency to convert to (without white spaces)");
-            }
-            while (!(query = keyboard.nextLine()).isEmpty());
-            System.out.println("Thank you for using converter!");
-        }
-        catch (FileNotFoundException e) {
-            System.err.println("File not found");
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }
