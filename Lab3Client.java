@@ -15,24 +15,30 @@ public class Lab3Client {
             if (args.length > 1){
                 portNumber = Integer.parseInt(args[1]);
                 if (args.length > 2){
-                    System.err.println("Usage: java EchoClientTCP [<host name>] [<port number>]");
+                    System.err.println("Usage: java ConverteroClientTCP [<host name>] [<port number>]");
                     System.exit(1);
                 }
             }
         }
-        System.out.println("Hi, I am EchoUCase TCP client!");
+        System.out.println("Hi, I am Converter TCP client!");
         try(
                 Socket clientSocket = new Socket(hostName, portNumber);
-                PrintWriter out =new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in =new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                BufferedReader stdIn =new BufferedReader(new InputStreamReader(System.in)))
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in)))
         {
             String userInput;
-            System.out.print("I (Client) [" + InetAddress.getLocalHost()  + ":" + clientSocket.getLocalPort() + "] > ");
+            //write instructions to the screen
+            System.out.println("Type in first currency, amount and currency to convert to (without white spaces). Use dot as a decimal separator");
+            System.out.print("I (Client) [" + InetAddress.getLocalHost()  + ":" + clientSocket.getLocalPort() + "]> ");
+
+            //continue until the client sends an enpty line
             while ((userInput = stdIn.readLine()) != null && !userInput.isEmpty()){
                 out.println(userInput);
                 String receivedText = in.readLine();
-                System.out.println("Server [" + hostName +  ":" + portNumber + "] > " + receivedText);
+                //print to screen answer from the host
+                System.out.println("Server [" + hostName +  ":" + portNumber + "]> " + receivedText);
+                System.out.println("\nType in first currency, amount and currency to convert to (without white spaces)\n");
                 System.out.print("I (Client) [" + clientSocket.getLocalAddress().getHostAddress() + ":" + clientSocket.getLocalPort() + "] > ");
             }
         } catch (UnknownHostException e){System.err.println("Unknown host " + hostName);

@@ -2,8 +2,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.Buffer;
-import java.util.Scanner;
 
 public class Lab3MultiServer {
 
@@ -16,28 +14,24 @@ public class Lab3MultiServer {
                 portNumber = Integer.parseInt(args[0]);
             }
             else {
-                System.err.println("Usage: java EchoUcaseServerMutiClients [<port number>]");
+                System.err.println("Usage: java MultiServerConverter [<port number>]");
                 System.exit(1);
             }
         }
 
 
-        System.out.println("Hi I am the Multi Client TCP Server");
+        System.out.println("Hi I am the TCP MultiServerConverter");
         try (
                 ServerSocket serverSocket = new ServerSocket(portNumber);
 
                 )
         {
-            String receivedText;
-
             //continuosly listening for clients
             while (true) {
                 //start a new ClientServer thread for each client
                 ClientServer clientServer = new Lab3MultiServer.ClientServer(serverSocket.accept());
                 clientServer.start();
             }
-
-
         }
         catch (IOException e) {
             System.out.println("Exception occurred when trying to listen on port "+ portNumber + " or listening for a connection");
@@ -51,6 +45,7 @@ public class Lab3MultiServer {
         InetAddress clientAddres;
         int serverPort, clientPort;
 
+        //csv file location with currency rates
         String file = "C:\\Users\\Kasia\\IdeaProjects\\DatanetworkLab3Part1\\src\\currencies.csv";
         BufferedReader br = null;
         String line = "";
@@ -58,13 +53,11 @@ public class Lab3MultiServer {
         String[] currency = new String[10];
 
         public ClientServer(Socket connectSocket) {
+
             this.connectSocket = connectSocket;
             clientAddres = connectSocket.getInetAddress();
             clientPort = connectSocket.getPort();
             serverPort = connectSocket.getLocalPort();
-        }
-
-        public void run() {
 
             try {
                 br = new BufferedReader(new FileReader(file));
@@ -73,7 +66,7 @@ public class Lab3MultiServer {
                 }
             }
             catch (FileNotFoundException e) {
-                System.err.println("File not found");
+                System.err.println("File with currency rates not found");
             }
             catch (IOException e) {
                 e.printStackTrace();
@@ -86,6 +79,10 @@ public class Lab3MultiServer {
                     }
                 }
             }
+        }
+
+        public void run() {
+
             try (
                     PrintWriter out = new PrintWriter(connectSocket.getOutputStream(), true);
                     BufferedReader in = new BufferedReader(new InputStreamReader(connectSocket.getInputStream()));
@@ -93,11 +90,10 @@ public class Lab3MultiServer {
             {
                 String receivedText;
                 while (((receivedText = in.readLine()) != null)) {
-                    System.out.println("Type in first currency, amount and currency to convert to (without white spaces)");
                     System.out.println("Client [" + clientAddres.getHostAddress() +  ":" + clientPort +"] > " + receivedText);
                     String outText = Converter.convert(receivedText.toUpperCase(), currency);
                     out.println(outText);
-                    System.out.println("I (Server) [" + connectSocket.getLocalAddress().getHostAddress() + ":" + serverPort +"] > " + outText);
+                    System.out.println("I (Server) [" + connectSocket.getLocalAddress().getHostAddress() + ":" + serverPort +"]> " + outText);
                 }
                 connectSocket.close();
             }
